@@ -2,6 +2,11 @@
 
 Silly little cli to query an API with electricity prices for Norway.
 
+## Building
+```bash
+go build -o pwrcost cmd/main.go
+```
+Move the pwrcost binary to a directory in your PATH.
 ## Usage
 
 ```
