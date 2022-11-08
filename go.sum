@@ -1,0 +1,6 @@
+github.com/carlmjohnson/requests v0.22.3 h1:ip16AKXNYuArdw9L5/1mL+mNorlZO5XhkLg617yOumc=
+github.com/carlmjohnson/requests v0.22.3/go.mod h1:iTsaX9TdFg2+L4WtZO/HFyDMPEfBnogV3i4A4gjDnvs=
+github.com/perbu/asciigraph v0.0.0-20221108184455-14a6b48f6239 h1:14VFfepXWD56bxXl9UvPThQ+IkhfvLYeU8TNE2zeNHU=
+github.com/perbu/asciigraph v0.0.0-20221108184455-14a6b48f6239/go.mod h1:QlUFFunlP5d5iyOhbE/Tl9hbVT9VVi8SPPYJXSVLSwU=
+golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f h1:OfiFi4JbukWwe3lzw+xunroH1mnC1e2Gy5cxNJApiSY=
+golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
