@@ -16,10 +16,10 @@ type PowerCost struct {
 }
 
 // GetPrices for the given date.
-func GetPrices(date time.Time) ([]PowerCost, error) {
+func GetPrices(when time.Time, zone string) ([]PowerCost, error) {
 	var powerCost []PowerCost
 	err := requests.
-		URL(getUrl(time.Now(), "NO1")).
+		URL(getUrl(when, zone)).
 		ToJSON(&powerCost).
 		Fetch(context.TODO())
 	if err != nil {

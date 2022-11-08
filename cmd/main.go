@@ -9,7 +9,8 @@ import (
 )
 
 func plot(when time.Time) error {
-	pc, err := powercost.GetPrices(when)
+	zone := "NO1"
+	pc, err := powercost.GetPrices(when, zone)
 	if err != nil {
 		return err
 	}
@@ -30,8 +31,9 @@ func plot(when time.Time) error {
 	delta := max - min
 	highPrice := min + delta*0.8
 	lowPrice := min + delta*0.2
+	caption := fmt.Sprintf("Prices for %s in %s", when.Format("2006-01-02"), zone)
 	graphs := asciigraph.Plot(prices, asciigraph.Height(10), asciigraph.Width(24*3),
-		asciigraph.Caption(when.Format("2006-01-02")),
+		asciigraph.Caption(caption),
 		asciigraph.ColorAbove(asciigraph.Red, highPrice),
 		asciigraph.ColorBelow(asciigraph.DarkGreen, lowPrice))
 	fmt.Println(graphs)
