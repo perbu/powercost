@@ -31,7 +31,7 @@ powercost
     00:00 02:00 04:00 06:00 08:00 10:00 12:00 14:00 16:00 18:00 20:00 22:00 
 ```
 
-You can add the argument "tomorrow" and it'll try to give you the prices for tomorrow.
+You can add the flag "-tomorrow" and it'll try to give you the prices for tomorrow.
 
 
 ## Todo
