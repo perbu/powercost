@@ -1,6 +1,6 @@
 module github.com/perbu/powercost
 
-go 1.17
+go 1.18
 
 require (
 	github.com/carlmjohnson/requests v0.22.3
