@@ -31,8 +31,17 @@ powercost
     00:00 02:00 04:00 06:00 08:00 10:00 12:00 14:00 16:00 18:00 20:00 22:00 
 ```
 
-You can add the flag "-tomorrow" and it'll try to give you the prices for tomorrow.
+You can add the flag "-tomorrow" and it'll try to give you the prices for tomorrow. If the prices
+are not published yet, it will print an error message to stderr.
+```bash
+pwrcost -tomorrow
+```
+You can also add the flag "-zone" to display a different price zone.
+```bash
+pwrcost -zone=NO2
+```
 
+See also `pwrcost -h` for more usage information.
 
 ## Todo
  - Highlight the price for the current hour
