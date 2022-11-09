@@ -6,6 +6,7 @@ import (
 	"github.com/perbu/asciigraph"
 	"github.com/perbu/powercost/powercost"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -52,7 +53,7 @@ func plot(when time.Time, zone string) error {
 		}
 		fmt.Printf("%02d:00 ", i)
 	}
-
+	fmt.Println()
 	return nil
 }
 
@@ -66,6 +67,8 @@ func realMain() error {
 	if *tomorrow {
 		when = when.Add(24 * time.Hour)
 	}
+	// make sure *zone is uppercase:
+	*zone = strings.ToUpper(*zone)
 	err := plot(when, *zone)
 	if err != nil {
 		return err
