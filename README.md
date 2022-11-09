@@ -3,6 +3,9 @@
 Silly little cli to query an API with electricity prices for Norway.
 
 ## Building
+There are pre-build binaries for most architectures in the release sections.
+
+To build from source, you need to have go installed. Then run:
 ```bash
 go build -o pwrcost cmd/main.go
 ```
