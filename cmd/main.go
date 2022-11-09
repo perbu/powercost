@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/perbu/asciigraph"
 	"github.com/perbu/powercost/powercost"
@@ -8,8 +9,7 @@ import (
 	"time"
 )
 
-func plot(when time.Time) error {
-	zone := "NO1"
+func plot(when time.Time, zone string) error {
 	pc, err := powercost.GetPrices(when, zone)
 	if err != nil {
 		return err
@@ -57,12 +57,16 @@ func plot(when time.Time) error {
 }
 
 func realMain() error {
+	tomorrow := flag.Bool("tomorrow", false, "Show price for tomorrow instead of today")
+	zone := flag.String("zone", "NO1", "Which price zone to show")
+	flag.Parse()
+
 	// check if the argument tomorrow was given:
 	when := time.Now()
-	if len(os.Args) > 1 && os.Args[1] == "tomorrow" {
+	if *tomorrow {
 		when = when.Add(24 * time.Hour)
 	}
-	err := plot(when)
+	err := plot(when, *zone)
 	if err != nil {
 		return err
 	}
