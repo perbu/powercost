@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func plot(when time.Time, zone string, shortTime bool) error {
+func plot(when time.Time, zone string) error {
 	pc, err := powercost.GetPrices(when, zone)
 	if err != nil {
 		return err
@@ -38,32 +38,14 @@ func plot(when time.Time, zone string, shortTime bool) error {
 		asciigraph.ColorAbove(asciigraph.Red, highPrice),
 		asciigraph.ColorBelow(asciigraph.DarkGreen, lowPrice))
 	fmt.Println(graphs)
-	printXaxisLabels(shortTime)
+	printXaxisLabels()
 	return nil
 }
 
-func printXaxisLabels(shortTime bool) {
-	if shortTime {
-		fmt.Print("     ")
-		for i := 0; i <= 24; i++ {
-			fmt.Printf("%02d ", i)
-		}
-	} else {
-		fmt.Print("       ")
-		for i := 0; i < 24; i++ {
-			if i%2 == 0 {
-				continue
-			}
-			fmt.Printf("%02d:00 ", i)
-		}
-		fmt.Println()
-		fmt.Print("    ")
-		for i := 0; i < 24; i++ {
-			if i%2 == 1 {
-				continue
-			}
-			fmt.Printf("%02d:00 ", i)
-		}
+func printXaxisLabels() {
+	fmt.Print("     ")
+	for i := 0; i <= 24; i++ {
+		fmt.Printf("%02d ", i)
 	}
 	fmt.Println()
 }
@@ -71,7 +53,6 @@ func printXaxisLabels(shortTime bool) {
 func realMain() error {
 	tomorrow := flag.Bool("tomorrow", false, "Show price for tomorrow instead of today")
 	zone := flag.String("zone", "NO1", "Which price zone to show")
-	shortTime := flag.Bool("short-time", false, "Use short time format on axis labels")
 	flag.Parse()
 
 	// check if the argument tomorrow was given:
@@ -79,10 +60,9 @@ func realMain() error {
 	if *tomorrow {
 		when = when.Add(24 * time.Hour)
 	}
-
 	// make sure *zone is uppercase:
 	*zone = strings.ToUpper(*zone)
-	err := plot(when, *zone, *shortTime)
+	err := plot(when, *zone)
 	if err != nil {
 		return err
 	}
