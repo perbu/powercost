@@ -38,12 +38,14 @@ func plot(when time.Time, zone string) error {
 		asciigraph.ColorAbove(asciigraph.Red, highPrice),
 		asciigraph.ColorBelow(asciigraph.DarkGreen, lowPrice))
 	fmt.Println(graphs)
-	printXaxisLabels()
+	margin := strings.Index(graphs, "┤") - 1
+	printXaxisLabels(margin)
 	return nil
 }
 
-func printXaxisLabels() {
-	fmt.Print("     ")
+func printXaxisLabels(margin int) {
+	fmt.Print(strings.Repeat(" ", margin))
+
 	for i := 0; i <= 24; i++ {
 		fmt.Printf("%02d ", i)
 	}
