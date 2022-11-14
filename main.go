@@ -54,14 +54,32 @@ func printXaxisLabels(margin int) {
 
 func realMain() error {
 	tomorrow := flag.Bool("tomorrow", false, "Show price for tomorrow instead of today")
+	yesterday := flag.Bool("yesterday", false, "Show price for yesterday instead of today")
+	date := flag.String("date", "", "Show price for the given date (YYYY-MM-DD)")
 	zone := flag.String("zone", "NO1", "Which price zone to show")
 	flag.Parse()
-
+	if *tomorrow && *yesterday {
+		return fmt.Errorf("Can't show both yesterday and tomorrow")
+	}
 	// check if the argument tomorrow was given:
 	when := time.Now()
 	if *tomorrow {
 		when = when.Add(24 * time.Hour)
 	}
+	if *yesterday {
+		when = when.Add(-24 * time.Hour)
+	}
+	if *date != "" {
+		if *tomorrow || *yesterday {
+			return fmt.Errorf("Can't show both a specific date and yesterday or tomorrow")
+		}
+		var err error
+		when, err = time.Parse("2006-01-02", *date)
+		if err != nil {
+			return fmt.Errorf("Invalid date: %v", err)
+		}
+	}
+
 	// make sure *zone is uppercase:
 	*zone = strings.ToUpper(*zone)
 	err := plot(when, *zone)
