@@ -10,14 +10,18 @@ import (
 	"time"
 )
 
-func plot(when time.Time, zone string) error {
+func plot(when time.Time, zone string, ore bool) error {
 	pc, err := powercost.GetPrices(when, zone)
 	if err != nil {
 		return err
 	}
 	prices := make([]float64, len(pc))
 	for i, p := range pc {
-		prices[i] = p.NOKPerKWh
+		if ore {
+			prices[i] = p.NOKPerKWh * 100
+		} else {
+			prices[i] = p.NOKPerKWh
+		}
 	}
 	// find the max and min prices:
 	min, max := prices[0], prices[0]
@@ -32,7 +36,11 @@ func plot(when time.Time, zone string) error {
 	delta := max - min
 	highPrice := min + delta*0.8
 	lowPrice := min + delta*0.2
-	caption := fmt.Sprintf("Prices for %s in %s", when.Format("2006-01-02"), zone)
+	unit := "Kr/kWh"
+	if ore {
+		unit = "øre/kWh"
+	}
+	caption := fmt.Sprintf("Prices for %s in %s (%s)", when.Format("2006-01-02"), zone, unit)
 	graphs := asciigraph.Plot(prices, asciigraph.Height(10), asciigraph.Width(24*3),
 		asciigraph.Caption(caption),
 		asciigraph.ColorAbove(asciigraph.Red, highPrice),
@@ -55,6 +63,7 @@ func printXaxisLabels(margin int) {
 func realMain() error {
 	tomorrow := flag.Bool("tomorrow", false, "Show price for tomorrow instead of today")
 	yesterday := flag.Bool("yesterday", false, "Show price for yesterday instead of today")
+	ore := flag.Bool("ore", false, "Show price in øre, instead of NOK")
 	date := flag.String("date", "", "Show price for the given date (YYYY-MM-DD)")
 	zone := flag.String("zone", "NO1", "Which price zone to show")
 	flag.Parse()
@@ -82,7 +91,7 @@ func realMain() error {
 
 	// make sure *zone is uppercase:
 	*zone = strings.ToUpper(*zone)
-	err := plot(when, *zone)
+	err := plot(when, *zone, *ore)
 	if err != nil {
 		return err
 	}
