@@ -16,7 +16,7 @@ type PowerCost struct {
 }
 
 // GetPrices for the given date.
-func GetPrices(when time.Time, zone string) ([]PowerCost, error) {
+func GetPrices(when time.Time, zone string, mva bool) ([]PowerCost, error) {
 	var powerCost []PowerCost
 	err := requests.
 		URL(getUrl(when, zone)).
@@ -25,18 +25,13 @@ func GetPrices(when time.Time, zone string) ([]PowerCost, error) {
 	if err != nil {
 		return nil, fmt.Errorf("fetching power cost: %w", err)
 	}
-	return powerCost, nil
-}
-
-// GetCurrent takes a list of PowerCost and returns the current price
-func GetCurrent(pc []PowerCost) (PowerCost, error) {
-	// iterate over the list and return the first one that is in the future
-	for _, p := range pc {
-		if p.TimeStart.After(time.Now()) {
-			return p, nil
+	// if we want prices including MVA we adjust it here.
+	if mva {
+		for i, p := range powerCost {
+			powerCost[i].NOKPerKWh = p.NOKPerKWh * 1.25
 		}
 	}
-	return PowerCost{}, fmt.Errorf("no current price found")
+	return powerCost, nil
 }
 
 func getUrl(date time.Time, zone string) string {
