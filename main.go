@@ -40,6 +40,9 @@ func plot(when time.Time, zone string, ore bool, nomva bool) error {
 	if ore {
 		unit = "øre/kWh"
 	}
+	if nomva {
+		unit = unit + " excl MVA"
+	}
 	caption := fmt.Sprintf("Prices for %s in %s (%s)", when.Format("2006-01-02"), zone, unit)
 	graphs := asciigraph.Plot(prices, asciigraph.Height(10), asciigraph.Width(24*3),
 		asciigraph.Caption(caption),
