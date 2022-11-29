@@ -16,7 +16,7 @@ type PowerCost struct {
 }
 
 // GetPrices for the given date.
-func GetPrices(when time.Time, zone string, mva bool) ([]PowerCost, error) {
+func GetPrices(when time.Time, zone string, nomva bool) ([]PowerCost, error) {
 	var powerCost []PowerCost
 	err := requests.
 		URL(getUrl(when, zone)).
@@ -26,7 +26,7 @@ func GetPrices(when time.Time, zone string, mva bool) ([]PowerCost, error) {
 		return nil, fmt.Errorf("fetching power cost: %w", err)
 	}
 	// if we want prices including MVA we adjust it here.
-	if mva {
+	if !nomva {
 		for i, p := range powerCost {
 			powerCost[i].NOKPerKWh = p.NOKPerKWh * 1.25
 		}

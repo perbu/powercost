@@ -10,8 +10,8 @@ import (
 	"time"
 )
 
-func plot(when time.Time, zone string, ore bool, mva bool) error {
-	pc, err := powercost.GetPrices(when, zone, mva)
+func plot(when time.Time, zone string, ore bool, nomva bool) error {
+	pc, err := powercost.GetPrices(when, zone, nomva)
 	if err != nil {
 		return err
 	}
@@ -66,7 +66,8 @@ func realMain() error {
 	ore := flag.Bool("ore", false, "Show price in øre, instead of NOK")
 	date := flag.String("date", "", "Show price for the given date (YYYY-MM-DD)")
 	zone := flag.String("zone", "NO1", "Which price zone to show")
-	mva := flag.Bool("mva", false, "Show prices including MVA (25%)")
+	nomva := flag.Bool("no-mva", false,
+		"Always from prices without MVA. Default is to include it for NO1, NO2 and NO3. NO4 pays no MVA.")
 	flag.Parse()
 	if *tomorrow && *yesterday {
 		return fmt.Errorf("Can't show both yesterday and tomorrow")
@@ -92,7 +93,10 @@ func realMain() error {
 
 	// make sure *zone is uppercase:
 	*zone = strings.ToUpper(*zone)
-	err := plot(when, *zone, *ore, *mva)
+	if *zone == "NO4" {
+		*nomva = true
+	}
+	err := plot(when, *zone, *ore, *nomva)
 	if err != nil {
 		return err
 	}
