@@ -46,7 +46,8 @@ func plot(when time.Time, zone string, ore bool, nomva bool) error {
 		asciigraph.ColorAbove(asciigraph.Red, highPrice),
 		asciigraph.ColorBelow(asciigraph.DarkGreen, lowPrice))
 	fmt.Println(graphs)
-	margin := strings.Index(graphs, "┤") - 1
+	// find the first vertical line so we can align the x-axis labels
+	margin := strings.IndexAny(graphs, "┤┼") - 1
 	printXaxisLabels(margin)
 	return nil
 }
@@ -93,7 +94,7 @@ func realMain() error {
 
 	// make sure *zone is uppercase:
 	*zone = strings.ToUpper(*zone)
-	if *zone == "NO4" {
+	if *zone == "NO4" { // no MVA in NO4
 		*nomva = true
 	}
 	err := plot(when, *zone, *ore, *nomva)
