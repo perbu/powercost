@@ -10,10 +10,10 @@ import (
 	"time"
 )
 
-func plot(when time.Time, zone string, ore bool, nomva bool) error {
+func plot(when time.Time, zone string, ore, nomva, showCurrentHour bool) error {
 	pc, err := powercost.GetPrices(when, zone, nomva)
 	if err != nil {
-		return err
+		return fmt.Errorf("powercost.GetPrices: %w", err)
 	}
 	prices := make([]float64, len(pc))
 	for i, p := range pc {
@@ -23,19 +23,19 @@ func plot(when time.Time, zone string, ore bool, nomva bool) error {
 			prices[i] = p.NOKPerKWh
 		}
 	}
-	// find the max and min prices:
-	min, max := prices[0], prices[0]
+	// find the maxPrice and minPrice prices:
+	minPrice, maxPrice := prices[0], prices[0]
 	for _, p := range prices {
-		if p > max {
-			max = p
+		if p > maxPrice {
+			maxPrice = p
 		}
-		if p < min {
-			min = p
+		if p < minPrice {
+			minPrice = p
 		}
 	}
-	delta := max - min
-	highPrice := min + delta*0.8
-	lowPrice := min + delta*0.2
+	delta := maxPrice - minPrice
+	highPrice := minPrice + delta*0.8
+	lowPrice := minPrice + delta*0.2
 	unit := "Kr/kWh"
 	if ore {
 		unit = "øre/kWh"
@@ -51,15 +51,21 @@ func plot(when time.Time, zone string, ore bool, nomva bool) error {
 	fmt.Println(graphs)
 	// find the first vertical line so we can align the x-axis labels
 	margin := strings.IndexAny(graphs, "┤┼") - 1
-	printXaxisLabels(margin)
+	printXaxisLabels(margin, showCurrentHour)
 	return nil
 }
 
-func printXaxisLabels(margin int) {
+func printXaxisLabels(margin int, showCurrentHour bool) {
 	fmt.Print(strings.Repeat(" ", margin))
-
+	// extract the current hour
+	hour := time.Now().Hour()
 	for i := 0; i <= 24; i++ {
-		fmt.Printf("%02d ", i)
+		if showCurrentHour && i == hour {
+			// print the current hour in reverse video
+			fmt.Printf("\033[7m%02d\033[0m ", i)
+		} else {
+			fmt.Printf("%02d ", i)
+		}
 	}
 	fmt.Println()
 }
@@ -91,8 +97,12 @@ func realMain() error {
 		var err error
 		when, err = time.Parse("2006-01-02", *date)
 		if err != nil {
-			return fmt.Errorf("Invalid date: %v", err)
+			return fmt.Errorf("invalid date: %w", err)
 		}
+	}
+	var showCurrentHour bool
+	if !*tomorrow || !*yesterday || *date == "" {
+		showCurrentHour = true
 	}
 
 	// make sure *zone is uppercase:
@@ -100,7 +110,7 @@ func realMain() error {
 	if *zone == "NO4" { // no MVA in NO4
 		*nomva = true
 	}
-	err := plot(when, *zone, *ore, *nomva)
+	err := plot(when, *zone, *ore, *nomva, showCurrentHour)
 	if err != nil {
 		return err
 	}
